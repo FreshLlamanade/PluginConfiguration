@@ -4,14 +4,14 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Character}.
  */
 public class CharacterConfigurationValue extends ConfigurationValue<Character> {
 
-    public CharacterConfigurationValue(JavaPlugin plugin, String path, Character defaultValue) {
+    public CharacterConfigurationValue(Plugin plugin, String path, Character defaultValue) {
         super(plugin, path, defaultValue);
     }
 

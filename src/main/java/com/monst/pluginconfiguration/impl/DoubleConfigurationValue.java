@@ -4,14 +4,14 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Double}.
  */
 public class DoubleConfigurationValue extends ConfigurationValue<Double> {
 
-    public DoubleConfigurationValue(JavaPlugin plugin, String path, Double defaultValue) {
+    public DoubleConfigurationValue(Plugin plugin, String path, Double defaultValue) {
         super(plugin, path, defaultValue);
     }
 

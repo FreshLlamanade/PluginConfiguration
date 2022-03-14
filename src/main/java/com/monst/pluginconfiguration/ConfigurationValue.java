@@ -7,12 +7,9 @@ import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
 import com.monst.pluginconfiguration.validation.Bound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -21,7 +18,7 @@ import java.util.function.Supplier;
  */
 public abstract class ConfigurationValue<T> implements Supplier<T> {
 
-    private final JavaPlugin plugin;
+    private final Plugin plugin;
     private final String path;
     private final T defaultValue;
     private T loadedValue;
@@ -33,10 +30,10 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * @param path the path in the config.yml file (subsections are demarcated with .)
      * @param defaultValue the default value of this configuration value
      */
-    public ConfigurationValue(JavaPlugin plugin, String path, T defaultValue) {
+    public ConfigurationValue(Plugin plugin, String path, T defaultValue) {
         this.plugin = plugin;
         this.path = path;
-        this.defaultValue = defaultValue;
+        this.defaultValue = validate(defaultValue);
         this.reload();
     }
 
@@ -51,16 +48,22 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
 
     /**
      * Reloads this configuration value.
+     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link Plugin#reloadConfig()}
+     * before using this method, to ensure that the most recent version of the {@code config.yml} file is loaded into memory,
+     * as well as {@link Plugin#saveConfig()} afterwards to finally persist any changes into the file.
+     * <p>If multiple values are to be reloaded consecutively, it is best practice to call {@link Plugin#reloadConfig() reloadConfig}
+     * once at the very beginning, and {@link Plugin#saveConfig() saveConfig} once at the very end.
      */
     public void reload() {
         this.loadedValue = load();
     }
 
     /**
-     * Loads this configuration value from the config.yml.
-     * If the value was missing or uninterpretable, the default value will be written to the config.yml and used.
-     * If the value was otherwise imperfectly formed or outside its bounds, a replacement will be written to the config.yml and used.
-     * @return the loaded value from the config.yml
+     * Loads this configuration value from the plugin's current {@link FileConfiguration} using {@link Plugin#getConfig()}.
+     * If the value was missing or uninterpretable, the default value will be written to the plugin config and returned.
+     * If the value was otherwise imperfectly formed or outside its bounds, a replacement will be written to the plugin config and returned.
+     * In any case, by the time this method returns a value, that value will be what is found in the plugin config.
+     * @return the loaded value from the config
      */
     private T load() {
         try {
@@ -76,28 +79,32 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
 
     /**
      * Parses a user-entered string to a new value, and sets this configuration value.
-     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link JavaPlugin#reloadConfig()}
-     * before using this method, to ensure that changes are written to the most up-to-date version of the config.yml file,
-     * as well as {@link JavaPlugin#saveConfig()} after this method to finally persist those changes to the file.
-     * This library does not know how often values are going to be set, and so cannot determine the best strategy for
-     * when to call these two methods.
+     * If the input string is empty or null, and this configuration value is not optional
+     * (does not override {@link #isOptional()}), then the configuration value will be reset to its default.
+     * <p><b>Note:</b></p> this method automatically calls {@link Plugin#reloadConfig()} and
+     * {@link Plugin#saveConfig()} before and after performing the set operation, under the assumption that
+     * parsing user input will not happen inside a loop.
+     * Changes will be reflected in the {@code config.yml} file immediately.
      * @param input user input to be parsed
      * @throws ArgumentParseException if the input could not be parsed
      */
+    @SuppressWarnings("unused")
     public void parseAndSet(String input) throws ArgumentParseException {
+        plugin.reloadConfig();
         if (input.isEmpty() && !isOptional())
             reset();
         else
             set(parse(input));
+        plugin.saveConfig();
     }
 
     /**
      * Validates and sets this configuration value to a new value.
-     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link JavaPlugin#reloadConfig()}
-     * before using this method, to ensure that changes are written to the most up-to-date version of the config.yml file,
-     * as well as {@link JavaPlugin#saveConfig()} after this method to finally persist those changes to the file.
-     * This library does not know how often values are going to be set, and so cannot determine the best strategy for
-     * when to call these two methods.
+     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link Plugin#reloadConfig()}
+     * before using this method, to ensure that the most recent version of the {@code config.yml} file is loaded into memory,
+     * as well as {@link Plugin#saveConfig()} afterwards to finally persist any changes into the file.
+     * <p>If multiple values are to be set consecutively, it is best practice to call {@link Plugin#reloadConfig() reloadConfig}
+     * once at the very beginning, and {@link Plugin#saveConfig() saveConfig} once at the very end.
      * @param newValue the new value
      */
     public void set(T newValue) {
@@ -110,11 +117,11 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
 
     /**
      * Resets this configuration value to the default.
-     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link JavaPlugin#reloadConfig()}
-     * before using this method, to ensure that changes are written to the most up-to-date version of the config.yml file,
-     * as well as {@link JavaPlugin#saveConfig()} after this method to finally persist those changes to the file.
-     * This library does not know how often values are going to be set, and so cannot determine the best strategy for
-     * when to call these two methods.
+     * <p><b>Note:</b></p> it is the responsibility of the developer to call {@link Plugin#reloadConfig()}
+     * before using this method, to ensure that the most recent version of the {@code config.yml} file is loaded into memory,
+     * as well as {@link Plugin#saveConfig()} afterwards to finally persist any changes into the file.
+     * <p>If multiple values are to be reset consecutively, it is best practice to call {@link Plugin#reloadConfig() reloadConfig}
+     * once at the very beginning, and {@link Plugin#saveConfig() saveConfig} once at the very end.
      */
     public void reset() {
         beforeSet();
@@ -183,7 +190,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
 
     /**
      * Reads and reconstructs the value currently stored in the {@link FileConfiguration} under the given path.
-     * @param config the plugin {@link FileConfiguration}, findable with {@link JavaPlugin#getConfig()}
+     * @param config the plugin {@link FileConfiguration}, findable with {@link Plugin#getConfig()}
      * @param path the path where the value is located
      * @return the reconstructed value currently stored in the config.yml file
      * @throws MissingValueException if the value is missing from the file
@@ -230,12 +237,14 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * @throws ValueOutOfBoundsException if the value is outside its bounds
      */
     static <T> void validate(T t, List<Bound<T>> bounds) throws ValueOutOfBoundsException {
-        new ExceptionBuffer<>(t).validate(bounds).getOrThrow();
+        if (bounds.size() > 0)
+            new ExceptionBuffer<>(t).validate(bounds).getOrThrow();
     }
 
     /**
      * Gets a list of {@link Bound}s that this configuration value is required to conform to.
-     * If the value is found to be outside one or more of these bounds, it will be replaced.
+     * These bounds will be silently enforced at all times. If a value is found to be non-compliant with a bound
+     * in the list, the next bound will validate its replacement.
      * By default, this method returns a singleton list of the Bound provided by {@link #getBound()}.
      * Therefore, if the configuration value only requires a single Bound, override that method instead.
      * @return a list of Bounds for this configuration value

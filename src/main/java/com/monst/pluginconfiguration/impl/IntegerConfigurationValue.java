@@ -4,14 +4,14 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Integer}.
  */
 public class IntegerConfigurationValue extends ConfigurationValue<Integer> {
 
-    public IntegerConfigurationValue(JavaPlugin plugin, String path, Integer defaultValue) {
+    public IntegerConfigurationValue(Plugin plugin, String path, Integer defaultValue) {
         super(plugin, path, defaultValue);
     }
 

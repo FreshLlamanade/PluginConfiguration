@@ -2,7 +2,7 @@ package com.monst.pluginconfiguration.impl;
 
 import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.math.BigDecimal;
 
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  */
 public class BigDecimalConfigurationValue extends ConfigurationValue<BigDecimal> {
 
-    public BigDecimalConfigurationValue(JavaPlugin plugin, String path, BigDecimal defaultValue) {
+    public BigDecimalConfigurationValue(Plugin plugin, String path, BigDecimal defaultValue) {
         super(plugin, path, defaultValue);
     }
 

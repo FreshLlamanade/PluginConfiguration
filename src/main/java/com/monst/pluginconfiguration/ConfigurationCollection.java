@@ -4,7 +4,7 @@ import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
 import com.monst.pluginconfiguration.validation.Bound;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public abstract class ConfigurationCollection<T, C extends Collection<T>> extends ConfigurationValue<C> {
 
-    public ConfigurationCollection(JavaPlugin plugin, String path, C defaultValue) {
+    public ConfigurationCollection(Plugin plugin, String path, C defaultValue) {
         super(plugin, path, defaultValue);
     }
 

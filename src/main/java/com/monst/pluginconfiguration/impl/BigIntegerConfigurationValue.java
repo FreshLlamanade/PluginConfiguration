@@ -2,7 +2,7 @@ package com.monst.pluginconfiguration.impl;
 
 import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.math.BigInteger;
 
@@ -11,7 +11,7 @@ import java.math.BigInteger;
  */
 public class BigIntegerConfigurationValue extends ConfigurationValue<BigInteger> {
 
-    public BigIntegerConfigurationValue(JavaPlugin plugin, String path, BigInteger defaultValue) {
+    public BigIntegerConfigurationValue(Plugin plugin, String path, BigInteger defaultValue) {
         super(plugin, path, defaultValue);
     }
 

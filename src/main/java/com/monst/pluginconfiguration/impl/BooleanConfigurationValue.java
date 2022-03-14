@@ -4,7 +4,7 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Boolean}.
@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class BooleanConfigurationValue extends ConfigurationValue<Boolean> {
 
-    public BooleanConfigurationValue(JavaPlugin plugin, String path, Boolean defaultValue) {
+    public BooleanConfigurationValue(Plugin plugin, String path, Boolean defaultValue) {
         super(plugin, path, defaultValue);
     }
 

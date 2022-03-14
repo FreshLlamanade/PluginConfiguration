@@ -3,7 +3,7 @@ package com.monst.pluginconfiguration.impl;
 import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import org.bukkit.Material;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Optional;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class MaterialConfigurationValue extends ConfigurationValue<Material> {
 
-    public MaterialConfigurationValue(JavaPlugin plugin, String path, Material defaultValue) {
+    public MaterialConfigurationValue(Plugin plugin, String path, Material defaultValue) {
         super(plugin, path, defaultValue);
     }
 

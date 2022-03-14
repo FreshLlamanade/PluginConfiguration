@@ -4,14 +4,14 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Float}.
  */
 public class FloatConfigurationValue extends ConfigurationValue<Float> {
 
-    public FloatConfigurationValue(JavaPlugin plugin, String path, Float defaultValue) {
+    public FloatConfigurationValue(Plugin plugin, String path, Float defaultValue) {
         super(plugin, path, defaultValue);
     }
 

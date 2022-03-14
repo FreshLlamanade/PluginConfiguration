@@ -2,7 +2,7 @@ package com.monst.pluginconfiguration.impl;
 
 import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
  */
 public class PathConfigurationValue extends ConfigurationValue<Path> {
 
-    public PathConfigurationValue(JavaPlugin plugin, String path, Path defaultValue) {
+    public PathConfigurationValue(Plugin plugin, String path, Path defaultValue) {
         super(plugin, path, defaultValue);
     }
 

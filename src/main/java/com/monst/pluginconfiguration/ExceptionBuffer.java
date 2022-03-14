@@ -25,7 +25,7 @@ class ExceptionBuffer<T> {
         this.encounteredException = encounteredException;
     }
 
-    <R> ExceptionBuffer<R> convert(Converter<R> converter) throws ValueOutOfBoundsException, UnreadableValueException {
+    <R> ExceptionBuffer<R> convert(Converter<R> converter) throws UnreadableValueException {
         try {
             return new ExceptionBuffer<>(converter.convert(t), encounteredException);
         } catch (ValueOutOfBoundsException e) {

@@ -1,14 +1,14 @@
 package com.monst.pluginconfiguration.impl;
 
 import com.monst.pluginconfiguration.ConfigurationValue;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link String}.
  */
 public class StringConfigurationValue extends ConfigurationValue<String> {
 
-    public StringConfigurationValue(JavaPlugin plugin, String path, String defaultValue) {
+    public StringConfigurationValue(Plugin plugin, String path, String defaultValue) {
         super(plugin, path, defaultValue);
     }
 

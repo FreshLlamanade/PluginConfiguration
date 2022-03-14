@@ -4,14 +4,14 @@ import com.monst.pluginconfiguration.ConfigurationValue;
 import com.monst.pluginconfiguration.exception.ArgumentParseException;
 import com.monst.pluginconfiguration.exception.UnreadableValueException;
 import com.monst.pluginconfiguration.exception.ValueOutOfBoundsException;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 /**
  * A configuration value of the type {@link Short}.
  */
 public class ShortConfigurationValue extends ConfigurationValue<Short> {
 
-    public ShortConfigurationValue(JavaPlugin plugin, String path, Short defaultValue) {
+    public ShortConfigurationValue(Plugin plugin, String path, Short defaultValue) {
         super(plugin, path, defaultValue);
     }
 

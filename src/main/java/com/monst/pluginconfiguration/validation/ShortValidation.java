@@ -7,19 +7,19 @@ public interface ShortValidation {
     }
 
     static Bound<Short> positive() {
-        return atLeast((short) 0);
+        return Bound.greaterThan((short) 0);
+    }
+
+    static Bound<Short> positiveOrZero() {
+        return Bound.atLeast((short) 0);
+    }
+
+    static Bound<Short> negativeOrZero() {
+        return Bound.atMost((short) 0);
     }
 
     static Bound<Short> negative() {
-        return atMost((short) 0);
-    }
-
-    static Bound<Short> atMost(short max) {
-        return Bound.requiring(s -> s <= max, s -> max);
-    }
-
-    static Bound<Short> atLeast(short min) {
-        return Bound.requiring(s -> s >= min, s -> min);
+        return Bound.lessThan((short) 0);
     }
 
 }

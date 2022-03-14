@@ -11,23 +11,23 @@ public interface BigIntegerValidation {
     }
 
     static Bound<BigInteger> absolute() {
-        return Bound.requiring(i -> i.signum() > 0, BigInteger::abs);
+        return Bound.requiring(i -> i.signum() >= 0, BigInteger::abs);
     }
 
     static Bound<BigInteger> positive() {
-        return Bound.requiring(i -> i.signum() > 0, i -> BigInteger.ZERO);
+        return Bound.greaterThan(BigInteger.ZERO);
+    }
+
+    static Bound<BigInteger> positiveOrZero() {
+        return Bound.atLeast(BigInteger.ZERO);
+    }
+
+    static Bound<BigInteger> negativeOrZero() {
+        return Bound.atMost(BigInteger.ZERO);
     }
 
     static Bound<BigInteger> negative() {
-        return Bound.requiring(i -> i.signum() < 0, i -> BigInteger.ZERO);
-    }
-
-    static Bound<BigInteger> atMost(BigInteger max) {
-        return Bound.requiring(i -> i.compareTo(max) <= 0, i -> max);
-    }
-
-    static Bound<BigInteger> atLeast(BigInteger min) {
-        return Bound.requiring(i -> i.compareTo(min) >= 0, i -> min);
+        return Bound.lessThan(BigInteger.ZERO);
     }
 
 }

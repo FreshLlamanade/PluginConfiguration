@@ -7,19 +7,19 @@ public interface IntegerValidation {
     }
 
     static Bound<Integer> positive() {
-        return atLeast(0);
+        return Bound.greaterThan(0);
+    }
+
+    static Bound<Integer> positiveOrZero() {
+        return Bound.atLeast(0);
+    }
+
+    static Bound<Integer> negativeOrZero() {
+        return Bound.atMost(0);
     }
 
     static Bound<Integer> negative() {
-        return atMost(0);
-    }
-
-    static Bound<Integer> atMost(int max) {
-        return Bound.requiring(i -> i <= max, i -> max);
-    }
-
-    static Bound<Integer> atLeast(int min) {
-        return Bound.requiring(i -> i >= min, i -> min);
+        return Bound.lessThan(0);
     }
 
 }

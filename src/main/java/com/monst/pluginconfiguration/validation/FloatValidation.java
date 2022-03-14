@@ -7,19 +7,19 @@ public interface FloatValidation {
     }
 
     static Bound<Float> positive() {
-        return atLeast(0f);
+        return Bound.greaterThan(0f);
+    }
+
+    static Bound<Float> positiveOrZero() {
+        return Bound.atLeast(0f);
+    }
+
+    static Bound<Float> negativeOrZero() {
+        return Bound.atMost(0f);
     }
 
     static Bound<Float> negative() {
-        return atMost(0f);
-    }
-
-    static Bound<Float> atMost(float max) {
-        return Bound.requiring(f -> f <= max, f -> max);
-    }
-
-    static Bound<Float> atLeast(float min) {
-        return Bound.requiring(f -> f >= min, f -> min);
+        return Bound.lessThan(0f);
     }
 
 }

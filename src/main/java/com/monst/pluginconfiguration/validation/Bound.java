@@ -18,6 +18,22 @@ public interface Bound<T> {
         return disallowing(any -> true, any -> any);
     }
 
+    static <T extends Comparable<T>> Bound<T> atLeast(T min) {
+        return requiring(t -> t.compareTo(min) >= 0, t -> min);
+    }
+
+    static <T extends Comparable<T>> Bound<T> greaterThan(T min) {
+        return requiring(t -> t.compareTo(min) > 0, t -> min);
+    }
+
+    static <T extends Comparable<T>> Bound<T> lessThan(T max) {
+        return requiring(t -> t.compareTo(max) < 0, t -> max);
+    }
+
+    static <T extends Comparable<T>> Bound<T> atMost(T max) {
+        return requiring(t -> t.compareTo(max) <= 0, t -> max);
+    }
+
     static <T> Bound<T> requiring(Predicate<? super T> shouldBe, Function<T, T> replacementMapper) {
         return t -> {
             if (!shouldBe.test(t))

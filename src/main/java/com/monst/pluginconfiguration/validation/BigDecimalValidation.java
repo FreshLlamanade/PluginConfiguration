@@ -14,19 +14,19 @@ public interface BigDecimalValidation {
     }
 
     static Bound<BigDecimal> positive() {
-        return Bound.requiring(d -> d.signum() > 0, d -> BigDecimal.ZERO);
+        return Bound.greaterThan(BigDecimal.ZERO);
+    }
+
+    static Bound<BigDecimal> positiveOrZero() {
+        return Bound.atLeast(BigDecimal.ZERO);
+    }
+
+    static Bound<BigDecimal> negativeOrZero() {
+        return Bound.atMost(BigDecimal.ZERO);
     }
 
     static Bound<BigDecimal> negative() {
-        return Bound.requiring(d -> d.signum() < 0, d -> BigDecimal.ZERO);
-    }
-
-    static Bound<BigDecimal> atMost(BigDecimal max) {
-        return Bound.requiring(d -> d.compareTo(max) <= 0, d -> max);
-    }
-
-    static Bound<BigDecimal> atLeast(BigDecimal min) {
-        return Bound.requiring(d -> d.compareTo(min) >= 0, d -> min);
+        return Bound.lessThan(BigDecimal.ZERO);
     }
 
 }

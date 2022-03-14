@@ -7,19 +7,19 @@ public interface LongValidation {
     }
 
     static Bound<Long> positive() {
-        return atLeast(0L);
+        return Bound.greaterThan(0L);
+    }
+
+    static Bound<Long> positiveOrZero() {
+        return Bound.atLeast(0L);
+    }
+
+    static Bound<Long> negativeOrZero() {
+        return Bound.atMost(0L);
     }
 
     static Bound<Long> negative() {
-        return atMost(0L);
-    }
-
-    static Bound<Long> atMost(long max) {
-        return Bound.requiring(l -> l <= max, l -> max);
-    }
-
-    static Bound<Long> atLeast(long min) {
-        return Bound.requiring(l -> l >= min, l -> min);
+        return Bound.lessThan(0L);
     }
 
 }

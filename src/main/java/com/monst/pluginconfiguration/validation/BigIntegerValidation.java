@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 public interface BigIntegerValidation {
 
     static Bound<BigDecimal> scale(int scale) {
-        return Bound.requiring(i -> i.scale() == scale, i -> i.setScale(2, RoundingMode.HALF_EVEN));
+        return Bound.requiring(i -> i.scale() == scale, i -> i.setScale(scale, RoundingMode.HALF_EVEN));
     }
 
     static Bound<BigInteger> absolute() {

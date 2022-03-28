@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 public interface BigDecimalValidation {
 
     static Bound<BigDecimal> scale(int scale) {
-        return Bound.requiring(d -> d.scale() == scale, d -> d.setScale(2, RoundingMode.HALF_EVEN));
+        return Bound.requiring(d -> d.scale() == scale, d -> d.setScale(scale, RoundingMode.HALF_EVEN));
     }
 
     static Bound<BigDecimal> absolute() {

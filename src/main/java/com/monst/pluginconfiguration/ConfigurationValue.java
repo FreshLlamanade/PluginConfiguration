@@ -34,7 +34,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
         this.plugin = plugin;
         this.path = path;
         this.defaultValue = validate(defaultValue);
-        this.reload();
+        this.loadedValue = load();
     }
 
     /**
@@ -54,6 +54,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * <p>If multiple values are to be reloaded consecutively, it is best practice to call {@link Plugin#reloadConfig() reloadConfig}
      * once at the very beginning, and {@link Plugin#saveConfig() saveConfig} once at the very end.
      */
+    @SuppressWarnings("unused")
     public void reload() {
         this.loadedValue = load();
     }

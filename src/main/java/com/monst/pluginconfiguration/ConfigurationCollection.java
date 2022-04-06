@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 /**
  * A configuration value with multiple elements, always stored as a list in the config.yml.
- * @param <T> the type of each element
- * @param <C> the type of the container collection
+ * @param <E> the type of each element
+ * @param <T> the type of the container collection
  */
-public abstract class ConfigurationCollection<T, C extends Collection<T>> extends ConfigurationValue<C> {
+public abstract class ConfigurationCollection<E, T extends Collection<E>> extends ConfigurationValue<T> {
 
-    public ConfigurationCollection(Plugin plugin, String path, C defaultValue) {
+    public ConfigurationCollection(Plugin plugin, String path, T defaultValue) {
         super(plugin, path, defaultValue);
     }
 
@@ -30,11 +30,20 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * @throws ArgumentParseException if an element could not be parsed
      */
     @Override
-    protected C parse(String input) throws ArgumentParseException {
-        C collection = createCollection();
-        for (String s : input.split("\\s*(,|\\s)\\s*")) // the entered list may be separated by commas or spaces or both
-            collection.add(parseOne(s));
+    protected T parse(String input) throws ArgumentParseException {
+        T collection = createCollection();
+        for (String s : input.split(getInputSplitRegex()))
+            collection.add(parseElement(s));
         return collection;
+    }
+
+    /**
+     * Returns a regular expression String which is used to split the user input into individual elements.
+     * By default, this method returns {@code "\\s*,?\\s*"}, which splits by commas, or spaces, or both.
+     * @return a regular expression to split user input for parsing
+     */
+    protected String getInputSplitRegex() {
+        return "\\s*(,|\\s)\\s*"; // the user input may be separated by commas or spaces or both
     }
 
     /**
@@ -52,17 +61,17 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * @return a collection of parsed and validated values
      * @throws ValueOutOfBoundsException if there was a problem with at least one value in the configuration file.
      */
-    protected C convert(Object o) throws ValueOutOfBoundsException, UnreadableValueException {
+    protected T convert(Object o) throws ValueOutOfBoundsException, UnreadableValueException {
         boolean problemFound = false;
         List<?> list = (o instanceof List) ? (List<?>) o : Collections.singletonList(o);
-        C collection = createCollection();
+        T collection = createCollection();
         for (Object element : list) {
             try {
-                T t = new ExceptionBuffer<>(element)
-                        .convert(this::convertOne)
+                E e = new ExceptionBuffer<>(element)
+                        .convert(this::convertElement)
                         .validate(getElementBounds())
                         .getOrThrow();
-                if (!collection.add(t))
+                if (!collection.add(e))
                     problemFound = true;
             } catch (ValueOutOfBoundsException e) {
                 collection.add(e.getReplacement());
@@ -85,9 +94,9 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * @return the input, or a validated replacement
      */
     @Override
-    public C validate(C collection) {
-        C validated = createCollection();
-        for (T element : collection) {
+    protected T validate(T collection) {
+        T validated = createCollection();
+        for (E element : collection) {
             try {
                 validate(element, getElementBounds());
                 validated.add(element);
@@ -105,13 +114,13 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
 
     /**
      * Creates a new instance of the specific collection implementation to wrap the elements in.
-     * This collection must implement the {@link Collection#add(Object)} method.
-     * The implementation-specific rules of this collection will be observed when adding elements;
-     * that is, if not all elements could be added, then the config.yml will be updated with only
-     * those elements that were successfully added.
+     * The only method this collection must implement is {@link Collection#add(Object) add}.
+     * The return values of this collection's {@link Collection#add(Object) add} method will be observed
+     * when adding elements; that is, if not all elements could be added, then the config.yml will be updated
+     * with only those elements that were successfully added.
      * @return a new instance of the desired collection
      */
-    protected abstract C createCollection();
+    protected abstract T createCollection();
 
     /**
      * Parses an element from a user-entered string.
@@ -119,7 +128,7 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * @return the parsed object
      * @throws ArgumentParseException if the input could not be parsed
      */
-    protected abstract T parseOne(String input) throws ArgumentParseException;
+    protected abstract E parseElement(String input) throws ArgumentParseException;
 
     /**
      * Takes an {@link Object} element from the list that was fetched from the configuration file, and attempts to
@@ -128,10 +137,10 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * @throws UnreadableValueException if the object is of an unrelated type and could not be converted.
      * @throws ValueOutOfBoundsException if the object was readable but should have been in a different format.
      */
-    protected T convertOne(Object o)
+    protected E convertElement(Object o)
             throws ValueOutOfBoundsException, UnreadableValueException {
         try {
-            return parseOne(o.toString());
+            return parseElement(o.toString());
         } catch (ArgumentParseException e) {
             throw new UnreadableValueException();
         }
@@ -144,7 +153,7 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * Therefore, if the collection elements only require a single Bound, override that method instead.
      * @return a list of Bounds for each collection element
      */
-    protected List<Bound<T>> getElementBounds() {
+    protected List<Bound<E>> getElementBounds() {
         return Collections.singletonList(getElementBound());
     }
 
@@ -155,19 +164,19 @@ public abstract class ConfigurationCollection<T, C extends Collection<T>> extend
      * If more than one bound is needed for the collection elements, override {@link #getElementBounds()} instead.
      * @return a Bound for all collection elements
      */
-    protected Bound<T> getElementBound() {
+    protected Bound<E> getElementBound() {
         return Bound.alwaysPasses();
     }
 
     @Override
-    protected String format(C collection) {
+    protected String format(T collection) {
         if (collection.isEmpty())
             return "[]";
-        return collection.stream().map(this::formatOne).collect(Collectors.joining(", ")); // do not include [ ]
+        return collection.stream().map(this::formatElement).collect(Collectors.joining(", ")); // do not include [ ]
     }
 
-    protected String formatOne(T t) {
-        return String.valueOf(t);
+    protected String formatElement(E e) {
+        return String.valueOf(e);
     }
 
 }

@@ -24,6 +24,12 @@ public class LongConfigurationValue extends ConfigurationValue<Long> {
         }
     }
 
+    /**
+     * Customize the specific ArgumentParseException that is thrown when an error is encountered while parsing this Long.
+     * This method is called by the default implementation of {@link #parse(String) parse}.
+     * @param input the input that could not be parsed
+     * @return a custom {@link ArgumentParseException}
+     */
     protected ArgumentParseException createArgumentParseException(String input) {
         return new ArgumentParseException();
     }

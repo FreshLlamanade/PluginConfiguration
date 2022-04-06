@@ -15,7 +15,7 @@ public interface BigIntegerValidation {
     }
 
     static Bound<BigInteger> positive() {
-        return Bound.greaterThan(BigInteger.ZERO);
+        return Bound.atLeast(BigInteger.ONE);
     }
 
     static Bound<BigInteger> positiveOrZero() {
@@ -27,7 +27,7 @@ public interface BigIntegerValidation {
     }
 
     static Bound<BigInteger> negative() {
-        return Bound.lessThan(BigInteger.ZERO);
+        return Bound.atMost(BigInteger.ONE.negate());
     }
 
 }

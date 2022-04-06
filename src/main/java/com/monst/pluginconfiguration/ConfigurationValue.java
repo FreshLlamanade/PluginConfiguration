@@ -13,7 +13,9 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- * A configuration value stored in the config.yml file under a certain path.
+ * A configuration value stored in the {@code config.yml} file under a certain path.
+ * By default, it is assumed that the configuration value is required to be present.
+ * If you wish to make a configuration value optional, wrap its type in an {@link Optional}.
  * @param <T> the type of the value
  */
 public abstract class ConfigurationValue<T> implements Supplier<T> {
@@ -24,10 +26,10 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     private T loadedValue;
 
     /**
-     * Creates a new configuration value of the specified plugin at the specified path in the plugin's config.yml file.
+     * Creates a new configuration value of the specified plugin at the specified path in the plugin's {@code config.yml} file.
      * Calling this constructor will immediately load the value from the file, creating it if it doesn't exist.
      * @param plugin the plugin instance
-     * @param path the path in the config.yml file (subsections are demarcated with .)
+     * @param path the path in the {@code config.yml} file (subsections are demarcated with .)
      * @param defaultValue the default value of this configuration value
      */
     public ConfigurationValue(Plugin plugin, String path, T defaultValue) {
@@ -38,7 +40,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     }
 
     /**
-     * Gets the current value of this configuration value as seen in the config.yml file.
+     * Gets the current value of this configuration value as seen in the {@code config.yml} file.
      * @return the current value
      */
     @Override
@@ -80,22 +82,18 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
 
     /**
      * Parses a user-entered string to a new value, and sets this configuration value.
-     * If the input string is empty or null, and this configuration value is not optional
-     * (does not override {@link #isOptional()}), then the configuration value will be reset to its default.
-     * <p><b>Note:</b></p> this method automatically calls {@link Plugin#reloadConfig()} and
-     * {@link Plugin#saveConfig()} before and after performing the set operation, under the assumption that
+     * <p><b>Note:</b></p> unlike other methods, this method automatically calls {@link Plugin#reloadConfig()} before and
+     * {@link Plugin#saveConfig()} after performing the set operation, under the assumption that
      * parsing user input will not happen inside a loop.
      * Changes will be reflected in the {@code config.yml} file immediately.
-     * @param input user input to be parsed
+     * @param input user input to be parsed, null if the value should be reset
      * @throws ArgumentParseException if the input could not be parsed
      */
     @SuppressWarnings("unused")
     public void parseAndSet(String input) throws ArgumentParseException {
         plugin.reloadConfig();
-        if (input.isEmpty() && !isOptional())
-            reset();
-        else
-            set(parse(input));
+        T newValue = parse(input);
+        set(newValue);
         plugin.saveConfig();
     }
 
@@ -124,6 +122,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * <p>If multiple values are to be reset consecutively, it is best practice to call {@link Plugin#reloadConfig() reloadConfig}
      * once at the very beginning, and {@link Plugin#saveConfig() saveConfig} once at the very end.
      */
+    @SuppressWarnings("unused")
     public void reset() {
         beforeSet();
         loadedValue = defaultValue;
@@ -138,7 +137,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * @param value the value to validate
      * @return the input, or a validated replacement
      */
-    public T validate(T value) {
+    protected T validate(T value) {
         try {
             validate(value, getBounds());
             return value;
@@ -170,16 +169,6 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     }
 
     /**
-     * Returns true if it is possible to leave this configuration value blank.
-     * This will enable {@link #parse(String)} to receive an empty string as an input.
-     * It is highly recommended in these cases to wrap the type of the configuration value with {@link java.util.Optional}.
-     * @return true if this configuration value is optional.
-     */
-    protected boolean isOptional() {
-        return false;
-    }
-
-    /**
      * Returns true if this configuration value can be changed and take effect at runtime, without a server restart.
      * This method may be overridden at will; it is not used by the rest of this library.
      * @return true if this value can be hot-swapped at runtime, false if it requires a restart.
@@ -193,7 +182,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
      * Reads and reconstructs the value currently stored in the {@link FileConfiguration} under the given path.
      * @param config the plugin {@link FileConfiguration}, findable with {@link Plugin#getConfig()}
      * @param path the path where the value is located
-     * @return the reconstructed value currently stored in the config.yml file
+     * @return the reconstructed value currently stored in the {@code config.yml} file
      * @throws MissingValueException if the value is missing from the file
      * @throws ValueOutOfBoundsException if the value is not within its bounds
      * @throws UnreadableValueException if the value is uninterpretable
@@ -218,7 +207,8 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     protected abstract T parse(String input) throws ArgumentParseException;
 
     /**
-     * Takes the {@link Object} that was fetched from the configuration file, and attempts to convert it into the correct type.
+     * Takes the {@link Object} that was fetched from the configuration file, and attempts to convert it into the correct type
+     * by calling {@link Object#toString() toString} and {@link #parse parsing} it.
      * This method should be overridden in cases where a more appropriate procedure exists.
      * @throws UnreadableValueException if the object is of an unrelated type and could not be converted.
      * @throws ValueOutOfBoundsException if the object was readable but should have been in a different format.
@@ -266,7 +256,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     }
 
     /**
-     * Converts the configuration value into a type that can be stored in the config.yml file.
+     * Converts the configuration value into a type that can be stored in the {@code config.yml} file.
      * By default, this method returns the value itself.
      * @param t the value
      * @return a file-storable object
@@ -276,7 +266,7 @@ public abstract class ConfigurationValue<T> implements Supplier<T> {
     }
 
     /**
-     * Gets the path of this configuration value where it can be found in the config.yml file.
+     * Gets the path of this configuration value where it can be found in the {@code config.yml} file.
      * @return the path of this configuration value
      */
     public String getPath() {

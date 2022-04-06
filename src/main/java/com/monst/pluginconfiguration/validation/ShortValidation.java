@@ -7,7 +7,7 @@ public interface ShortValidation {
     }
 
     static Bound<Short> positive() {
-        return Bound.greaterThan((short) 0);
+        return Bound.atLeast((short) 1);
     }
 
     static Bound<Short> positiveOrZero() {
@@ -19,7 +19,7 @@ public interface ShortValidation {
     }
 
     static Bound<Short> negative() {
-        return Bound.lessThan((short) 0);
+        return Bound.atMost((short) -1);
     }
 
 }

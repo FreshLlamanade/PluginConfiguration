@@ -13,20 +13,12 @@ public interface BigDecimalValidation {
         return Bound.requiring(d -> d.signum() > 0, BigDecimal::abs);
     }
 
-    static Bound<BigDecimal> positive() {
-        return Bound.greaterThan(BigDecimal.ZERO);
-    }
-
     static Bound<BigDecimal> positiveOrZero() {
         return Bound.atLeast(BigDecimal.ZERO);
     }
 
     static Bound<BigDecimal> negativeOrZero() {
         return Bound.atMost(BigDecimal.ZERO);
-    }
-
-    static Bound<BigDecimal> negative() {
-        return Bound.lessThan(BigDecimal.ZERO);
     }
 
 }

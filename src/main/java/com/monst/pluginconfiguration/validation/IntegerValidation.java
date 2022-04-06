@@ -7,7 +7,7 @@ public interface IntegerValidation {
     }
 
     static Bound<Integer> positive() {
-        return Bound.greaterThan(0);
+        return Bound.atLeast(1);
     }
 
     static Bound<Integer> positiveOrZero() {
@@ -19,7 +19,7 @@ public interface IntegerValidation {
     }
 
     static Bound<Integer> negative() {
-        return Bound.lessThan(0);
+        return Bound.atMost(-1);
     }
 
 }

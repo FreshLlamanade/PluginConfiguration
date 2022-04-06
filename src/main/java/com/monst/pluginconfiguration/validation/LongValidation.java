@@ -7,7 +7,7 @@ public interface LongValidation {
     }
 
     static Bound<Long> positive() {
-        return Bound.greaterThan(0L);
+        return Bound.atLeast(1L);
     }
 
     static Bound<Long> positiveOrZero() {
@@ -19,7 +19,7 @@ public interface LongValidation {
     }
 
     static Bound<Long> negative() {
-        return Bound.lessThan(0L);
+        return Bound.atMost(-1L);
     }
 
 }

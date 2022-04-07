@@ -170,9 +170,7 @@ public abstract class ConfigurationCollection<E, T extends Collection<E>> extend
 
     @Override
     protected String format(T collection) {
-        if (collection.isEmpty())
-            return "[]";
-        return collection.stream().map(this::formatElement).collect(Collectors.joining(", ")); // do not include [ ]
+        return collection.stream().map(this::formatElement).collect(Collectors.joining(", ")); // do not include brackets
     }
 
     protected String formatElement(E e) {
